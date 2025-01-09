@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter
 
+from database import get_db_connection
 from fixtures import tasks
 from schema.task import Task
 
@@ -10,12 +11,23 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 @router.get("/all", response_model=List[Task])
 async def index():
-    return tasks
+    result: List[Task] = []
+    cursor = get_db_connection().cursor()
+    tasks = cursor.execute("SELECT * FROM tasks").fetchall()
+    for task in tasks:
+        result.append(Task(id=task[0], name=task[1], description=task[2], pomodoro_count=task[3], category_id=task[4]))
+    return result
 
 
 @router.post("/", response_model=Task)
 async def create_task(task: Task):
-    tasks.append(task)
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(f"INSERT INTO Tasks (id, name, description, pomodoro_count, category_id) VALUES (?, ?, ?, ?, ?)",
+                   (task.id, task.name, task.description, task.pomodoro_count, task.category_id))
+
+    connection.commit()
+    connection.close()
     return task
 
 

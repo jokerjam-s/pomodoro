@@ -4,7 +4,7 @@ from pydantic import BaseModel, field_validator, model_validator
 class Task(BaseModel):
     id: int
     name: str | None = None
-    description: str
+    description: str | None = None
     pomodoro_count: int | None = None
     category_id: int
 

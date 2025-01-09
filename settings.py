@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    google_token_id: str = 'sfsdfsdfsfsdfsdfsdfsd'
+    SQLITE_DB_NAME: str = 'pomodoro.sqlite'
 
 
 settings = Settings()
